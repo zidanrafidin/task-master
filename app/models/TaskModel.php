@@ -25,14 +25,50 @@ class TaskModel {
     }
 
     // READ: Ambil semua task milik user dengan JOIN ke tabel kategori
-    public function getAllByUserId($user_id) {
+// READ: Ambil task dengan filter dinamis
+    public function getFilteredTasks($user_id, $filters = []) {
         $query = "SELECT t.*, c.category_name 
                   FROM tasks t 
                   LEFT JOIN categories c ON t.category_id = c.id 
-                  WHERE t.user_id = :user_id 
-                  ORDER BY t.created_at DESC";
+                  WHERE t.user_id = :user_id";
+        
+        // Array untuk menyimpan parameter binding
+        $params = [':user_id' => $user_id];
+
+        // 1. Filter Pencarian Teks (Judul atau Deskripsi) menggunakan ILIKE (PostgreSQL)
+        if (!empty($filters['search'])) {
+            $query .= " AND (t.title ILIKE :search OR t.description ILIKE :search)";
+            $params[':search'] = '%' . $filters['search'] . '%';
+        }
+        
+        // 2. Filter Kategori
+        if (!empty($filters['category_id'])) {
+            $query .= " AND t.category_id = :category_id";
+            $params[':category_id'] = $filters['category_id'];
+        }
+        
+        // 3. Filter Prioritas
+        if (!empty($filters['priority'])) {
+            $query .= " AND t.priority = :priority";
+            $params[':priority'] = $filters['priority'];
+        }
+        
+        // 4. Filter Status
+        if (!empty($filters['status'])) {
+            $query .= " AND t.status = :status";
+            $params[':status'] = $filters['status'];
+        }
+
+        // Urutkan dari yang terbaru
+        $query .= " ORDER BY t.created_at DESC";
+
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':user_id', $user_id);
+        
+        // Bind parameter secara dinamis menggunakan bindValue
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
+        
         $stmt->execute();
         return $stmt->fetchAll();
     }

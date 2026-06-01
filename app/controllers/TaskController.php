@@ -17,14 +17,29 @@ class TaskController extends Controller {
         $this->categoryModel = new CategoryModel();
     }
 
-    // Tampilkan daftar task
+// Tampilkan daftar task beserta Filter
     public function index() {
         $user_id = $_SESSION['user_id'];
-        $tasks = $this->taskModel->getAllByUserId($user_id);
+        
+        // Menangkap request filter dari URL (GET)
+        $filters = [
+            'search' => $_GET['search'] ?? '',
+            'category_id' => $_GET['category_id'] ?? '',
+            'priority' => $_GET['priority'] ?? '',
+            'status' => $_GET['status'] ?? ''
+        ];
+
+        // Memanggil model dengan mengirimkan filter
+        $tasks = $this->taskModel->getFilteredTasks($user_id, $filters);
+        
+        // Mengambil kategori untuk opsi di form filter
+        $categories = $this->categoryModel->getAllByUserId($user_id);
         
         $this->view('tasks/index', [
             'title' => 'Manajemen Task - Task Master',
-            'tasks' => $tasks
+            'tasks' => $tasks,
+            'categories' => $categories,
+            'filters' => $filters
         ]);
     }
 

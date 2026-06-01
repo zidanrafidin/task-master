@@ -16,26 +16,69 @@
         <?php unset($_SESSION['flash_success']); ?>
     <?php endif; ?>
 
+    <!-- WIDGET SEARCH & FILTER -->
+    <div class="bg-[#c084fc] neo-box p-6 mb-8 rounded-sm">
+        <form action="/taskmaster/task" method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            
+            <!-- Kolom Pencarian Teks (Lebih lebar) -->
+            <div class="md:col-span-2">
+                <input type="text" name="search" placeholder="Cari judul atau deskripsi..." 
+                       value="<?= htmlspecialchars($filters['search']) ?>" 
+                       class="w-full p-3 border-4 border-black outline-none font-bold bg-white focus:shadow-[4px_4px_0px_#000] rounded-sm transition-all">
+            </div>
+
+            <!-- Filter Kategori -->
+            <div>
+                <select name="category_id" class="w-full p-3 border-4 border-black outline-none font-bold bg-white focus:shadow-[4px_4px_0px_#000] rounded-sm cursor-pointer">
+                    <option value="">Semua Kategori</option>
+                    <?php foreach($categories as $c): ?>
+                        <option value="<?= $c['id'] ?>" <?= ($filters['category_id'] == $c['id']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($c['category_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <!-- Filter Status -->
+            <div>
+                <select name="status" class="w-full p-3 border-4 border-black outline-none font-bold bg-white focus:shadow-[4px_4px_0px_#000] rounded-sm cursor-pointer">
+                    <option value="">Semua Status</option>
+                    <option value="Todo" <?= ($filters['status'] == 'Todo') ? 'selected' : '' ?>>Todo</option>
+                    <option value="In Progress" <?= ($filters['status'] == 'In Progress') ? 'selected' : '' ?>>In Progress</option>
+                    <option value="Done" <?= ($filters['status'] == 'Done') ? 'selected' : '' ?>>Done</option>
+                </select>
+            </div>
+
+            <!-- Tombol Cari & Reset -->
+            <div class="flex gap-2">
+                <button type="submit" class="flex-1 bg-black text-white font-black py-3 neo-btn rounded-sm border-4 border-black hover:bg-gray-800">
+                    CARI
+                </button>
+                <a href="/taskmaster/task" class="flex-1 bg-white text-black font-black py-3 text-center neo-btn rounded-sm border-4 border-black">
+                    RESET
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Grid Card Task (Sama seperti sebelumnya) -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <?php if (empty($tasks)): ?>
             <div class="col-span-full bg-white neo-box p-10 text-center text-gray-500 font-bold text-xl">
-                Belum ada task. Klik tombol tambah untuk memulai!
+                Tidak ada task yang ditemukan.
             </div>
         <?php else: ?>
             <?php foreach ($tasks as $t): ?>
                 <?php 
-                    // Pewarnaan dinamis berdasarkan Prioritas
                     $prioColor = 'bg-gray-200';
                     if($t['priority'] == 'High') $prioColor = 'bg-[#f472b6]';
                     if($t['priority'] == 'Medium') $prioColor = 'bg-[#facc15]';
                     if($t['priority'] == 'Low') $prioColor = 'bg-[#a3e635]';
 
-                    // Ikon dinamis berdasarkan Status
                     $statusIcon = '📋';
                     if($t['status'] == 'In Progress') $statusIcon = '⏳';
                     if($t['status'] == 'Done') $statusIcon = '✅';
                 ?>
-                
                 <div class="bg-white neo-box p-6 flex flex-col justify-between h-full rounded-sm">
                     <div>
                         <div class="flex justify-between items-start mb-4">
