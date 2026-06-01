@@ -29,6 +29,8 @@ class AuthController extends Controller {
                 // Set Session jika login berhasil
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['name'];
+                require_once 'app/models/ActivityModel.php';
+                (new ActivityModel())->log($user['id'], "Berhasil login ke dalam sistem.");
                 header("Location: /taskmaster/dashboard");
                 exit;
             } else {

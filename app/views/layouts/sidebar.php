@@ -16,6 +16,9 @@
             <a href="/taskmaster/profile" class="block w-full text-left font-bold text-lg p-3 bg-white hover:bg-gray-100 neo-btn rounded-sm">
                 👤 Profil
             </a>
+            <a href="/taskmaster/activity" class="block w-full text-left font-bold text-lg p-3 bg-white hover:bg-gray-100 neo-btn rounded-sm mt-4">
+                🕒 Riwayat
+            </a>
         </nav>
 
         <div class="p-4 border-t-4 border-black bg-gray-100">

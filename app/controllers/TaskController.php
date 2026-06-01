@@ -57,6 +57,9 @@ class TaskController extends Controller {
 
             if (!empty($title) && !empty($category_id)) {
                 $this->taskModel->create($user_id, $category_id, $title, $description, $priority, $status, $deadline);
+                require_once 'app/models/ActivityModel.php';
+                (new ActivityModel())->log($user_id, "Membuat task baru: " . $title);
+
                 $_SESSION['flash_success'] = "Task baru berhasil ditambahkan!";
                 header("Location: /taskmaster/task");
                 exit;
