@@ -28,7 +28,7 @@ class Database {
             
         } catch(PDOException $exception) {
             // Menangkap dan menampilkan pesan error jika koneksi gagal
-            echo "<h3 style='color: red; font-family: sans-serif;'>❌ Koneksi Database Gagal: " . $exception->getMessage() . "</h3>";
+            echo "<h3 style='color: red; font-family: sans-serif;'> Koneksi Database Gagal: " . $exception->getMessage() . "</h3>";
         }
 
         return $this->conn;
